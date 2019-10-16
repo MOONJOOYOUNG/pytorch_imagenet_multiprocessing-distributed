@@ -27,6 +27,46 @@ model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
     and callable(models.__dict__[name]))
 
+
+'''
+optional arguments:
+  -h, --help            show this help message and exit
+  --arch ARCH, -a ARCH  model architecture: alexnet | densenet121 |
+                        densenet161 | densenet169 | densenet201 |
+                        resnet101 | resnet152 | resnet18 | resnet34 |
+                        resnet50 | squeezenet1_0 | squeezenet1_1 | vgg11 |
+                        vgg11_bn | vgg13 | vgg13_bn | vgg16 | vgg16_bn | vgg19
+                        | vgg19_bn (default: resnet18)
+  -j N, --workers N     number of data loading workers (default: 4)
+  --epochs N            number of total epochs to run
+  --start-epoch N       manual epoch number (useful on restarts)
+  -b N, --batch-size N  mini-batch size (default: 256), this is the total
+                        batch size of all GPUs on the current node when using
+                        Data Parallel or Distributed Data Parallel
+  --lr LR, --learning-rate LR
+                        initial learning rate
+  --momentum M          momentum
+  --weight-decay W, --wd W
+                        weight decay (default: 1e-4)
+  --print-freq N, -p N  print frequency (default: 10)
+  --resume PATH         path to latest checkpoint (default: none)
+  -e, --evaluate        evaluate model on validation set
+  --pretrained          use pre-trained model
+  --world-size WORLD_SIZE
+                        number of nodes for distributed training
+  --rank RANK           node rank for distributed training
+  --dist-url DIST_URL   url used to set up distributed training
+  --dist-backend DIST_BACKEND
+                        distributed backend
+  --seed SEED           seed for initializing training.
+  --gpu GPU             GPU id to use.
+  --multiprocessing-distributed
+                        Use multi-processing distributed training to launch N
+                        processes per node, which has N GPUs. This is the
+                        fastest way to use PyTorch for either single node or
+                        multi node data parallel training
+'''
+
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 parser.add_argument('data', metavar='DIR',
                     help='path to dataset')
@@ -85,6 +125,7 @@ parser.add_argument('--save_path',default='./res152_softmax1.0/', type=str, help
 parser.add_argument('--gpu_count',default= 4, type=int, help='use gpu count')
 
 """---------------------------------------------코드 실행---------------------------------------------------- """
+''' # --save_path './test/' --gpu_count 4 만 변경하고 돌릴 것 '''
 # python main.py -a resnet50 --dist-url 'tcp://127.0.0.1:2222' --dist-backend 'nccl' --multiprocessing-distributed --world-size 1 --rank 0 none --save_path './test/' --gpu_count 4
 """--------------------------------------------------------------------------------------------------------- """
 
