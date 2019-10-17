@@ -395,8 +395,9 @@ def train(train_loader, model, criterion, optimizer, epoch, args, logger, time_l
                 progress.display(i)
 
     ''' ------------------------- logger 에 업데이트-----------------------------'''
-    logger.write([epoch, losses.avg, top1.avg, top5.avg])
-    time_logger.write([epoch, batch_time.avg, data_time.avg])
+    if dist.get_rank() == 0:
+        logger.write([epoch, losses.avg, top1.avg, top5.avg])
+        time_logger.write([epoch, batch_time.avg, data_time.avg])
 
 
 def validate(val_loader, model, criterion, epoch, args, logger, time_logger):
@@ -437,14 +438,17 @@ def validate(val_loader, model, criterion, epoch, args, logger, time_logger):
             batch_time.update(time.time() - end)
             end = time.time()
 
+
             if dist.get_rank() == 0:
                 if i % args.print_freq == 0:
                     progress.display(i)
 
-        print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'.format(top1=top1, top5=top5))
+        if dist.get_rank() == 0:
+            print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'.format(top1=top1, top5=top5))
 
-    logger.write([epoch, losses.avg, top1.avg, top5.avg])
-    time_logger.write([epoch, batch_time.avg, data_time.avg])
+    if dist.get_rank() == 0:
+        logger.write([epoch, losses.avg, top1.avg, top5.avg])
+        time_logger.write([epoch, batch_time.avg, data_time.avg])
 
     return top1.avg
 
