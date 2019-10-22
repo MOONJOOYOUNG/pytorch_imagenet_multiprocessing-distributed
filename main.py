@@ -369,6 +369,13 @@ def train(train_loader, model, criterion, optimizer, epoch, args, logger, time_l
         output = model(images)
         loss = criterion(output, target)
 
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+        # Gradient averaging
+        average_gradients(model)
+        
         ''' -------------------------이미지넷 top1, top5 accuracy----------------------------'''
         acc1, acc5, correct = util.accuracy(output, target, topk=(1, 5))
 
@@ -381,11 +388,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args, logger, time_l
         losses.update(reduced_loss.item(), images.size(0))
         top1.update(reduced_top1.item(), images.size(0))
         top5.update(reduced_top5.item(), images.size(0))
-
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
+        
         batch_time.update(time.time() - end)
         end = time.time()
 
@@ -451,6 +454,11 @@ def validate(val_loader, model, criterion, epoch, args, logger, time_logger):
         time_logger.write([epoch, batch_time.avg, data_time.avg])
 
     return top1.avg
+
+def average_gradients(model):
+    for param in model.parameters():
+        dist.all_reduce(param.grad.data, op=dist.reduce_op.SUM)
+        param.grad.data /= args.gpu_count
 
 '''-----------------------------GPU에 있는 각 데이터 평균 취하기------------------------'''
 def reduce_tensor(tensor):
