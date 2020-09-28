@@ -13,3 +13,8 @@ https://github.com/pytorch/examples/tree/master/imagenet
 * 각 네트워크마다 그레이디언트를 구하고 각각 값을 모아서 평균을 구함.
 * 평균을 각 네트워크에 뿌려주고 네트워크의 모델을 업데이트함
  * 결과 뽑을씨 rank를 이용해서 하나의 gpu 값만 확인하고 record 하면됌   
+``` 
+# 0 : 0번 gpu를 말함
+if dist.get_rank() == 0:
+        logger.write([epoch, losses.avg, top1.avg, top5.avg])
+``` 
